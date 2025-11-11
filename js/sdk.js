@@ -6,7 +6,7 @@ const canales = [
     { callObj: null, estado: 0, selected: 0 }
 ];
 
-const port = chrome.runtime.connect();
+const port = chrome.runtime.connect({ name: 'popup' });
 
 port.onMessage.addListener(function(message) {
     if (message.type === "registrationStateChanged") {
