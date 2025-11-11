@@ -5,7 +5,8 @@
   "description": "Extensión para realizar llamadas.",
   "permissions": [
     "scripting",
-    "activeTab"
+    "activeTab",
+    "offscreen"
   ],
   "action": {
     "default_popup": "B3Phone.html"
