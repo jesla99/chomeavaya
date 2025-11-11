@@ -9,5 +9,8 @@
   ],
   "action": {
     "default_popup": "B3Phone.html"
+  },
+  "background": {
+    "service_worker": "js/background.js"
   }
 }
