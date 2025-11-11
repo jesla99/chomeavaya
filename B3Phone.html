@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="utf-8">
+	<title>Batres Call</title>
+	<link rel="stylesheet" href="B3Phone.css" type="text/css">
+	<script type="text/javascript" src="https://static.zdassets.com/zendesk_app_framework_sdk/2.0/zaf_sdk.min.js"></script>
+</head>
+<body>
+	<div id="login">
+		<p>
+			<label>Extensión :</label> <br/>
+			<input type="text" id="extn">
+		</p>
+		<p>
+			<label>Clave:</label> <br/>
+			<input type="password" id="pwd">
+		</p>
+		<p>
+			<br />
+			<button id="loginBtn">Iniciar Sesión</button>
+		</p>
+		<p style="text-align: right;">
+			<a href="https://172.16.0.151" target="_blank" id="valCert"> Validar certificado.</a>
+		</p>
+    </div>
+	<div id="dialer" style="display:none">
+		<span id="channels">
+			<div data-id="0"></div>
+			<!--div data-id="1"></div>
+			<div data-id="2"></div-->
+		</span>
+		<input type="text" id="pantalla" placeholder="Número o extensión"/>
+		<i class="icon-phone-circled"></i>
+		<input type="number" placeholder="ext" id="inpTrans"> 
+		<i class="icon-share"></i>
+		<i class="icon-edit"></i>
+		<i class="icon-volume-off"></i>
+		<i class="icon-pause"></i>
+		<div id="msgText"></div>
+	</div>
+	<div id="frm">
+		<div>
+			<label>Asunto:</label> 
+			<div>
+				<input placeholder="Título para el problema" id="inpAsunto"/>
+			</div>
+		</div>
+		<div>
+			<label>Descripción:</label>
+			<div>
+				<textarea placeholder="Descripción del inconveniente." id="inpDescripcion"></textarea>
+			</div>	
+		</div>
+	</div>
+	<audio id="remoteAudio" autoplay style="display:none"></audio>
+	<script src="https://cdn.jsdelivr.net/npm/jssip/dist/jssip.min.js"></script>
+	<script src="js/thirdparty/jquery-1.8.3.min.js"></script>
+	<script src="js/AWL-min/awl.min.js"></script>
+	<script src="js/jrapi.js"></script>
+	<script src="js/sdk.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns="http://www.w3.org/2000/svg">
+<metadata>Copyright (C) 2024 by original authors @ fontello.com</metadata>
+<defs>
+<font id="b3phone" horiz-adv-x="1000" >
+<font-face font-family="b3phone" font-weight="400" font-stretch="normal" units-per-em="1000" ascent="850" descent="-150" />
+<missing-glyph horiz-adv-x="1000" />
+<glyph glyph-name="phone-circled" unicode="&#xe800;" d="M0 350q0 207 147 354t353 146 354-146 146-354-146-354-354-146-353 146-147 354z m199 162q-4-51 41-142 71-133 229-248 107-71 193-73 29 0 47 16l84 86q10 10 8 23t-16 24l-123 72q-19 12-45-6l-35-37q-6-6-18-2-11 2-24 8t-25 16-21 16-21 21-20 17q-64 61-80 119 0 4 4 10l31 31q18 18 8 43l-68 129q-12 18-28 16-9 0-19-8l-84-86q-18-16-18-45z" horiz-adv-x="1000" />
+
+<glyph glyph-name="torso" unicode="&#xe801;" d="M0-150l0 358 338 144q-61 37-92 101t-31 133q0 104 64 184t162 80q102-4 164-83t63-181q-2-74-33-136t-86-98l334-144 0-358-883 0z" horiz-adv-x="883" />
+
+<glyph glyph-name="pause" unicode="&#xe802;" d="M0-25l0 750 313 0 0-750-313 0z m438 0l0 750 312 0 0-750-312 0z" horiz-adv-x="750" />
+
+<glyph glyph-name="share" unicode="&#xe803;" d="M0-121q0 143 24 256t60 186 95 124 107 76 122 38 114 15 107 2l0 245 371-372-371-371 0 268q-102 0-151-1t-126-10-114-26-86-51-74-83-47-124-31-172z" horiz-adv-x="1000" />
+
+<glyph glyph-name="volume-off" unicode="&#xe804;" d="M0 551l305 0 345 282 0-965-345 279-229 0z m713-283q0 4 2 6l76 76-76 76q-2 2-2 6t2 6l53 53q2 2 5 2t6-2l76-76 77 76q4 2 6 2t5-2l55-53q2-2 2-6t-2-6l-76-76 76-76q2-4 2-7t-2-5l-55-54q-2-2-5-2t-6 2l-77 78-76-78q-2-2-5-2t-6 2l-53 54q-2 2-2 6z" horiz-adv-x="1000" />
+
+<glyph glyph-name="mic" unicode="&#xe805;" d="M0 131l0 282 64 0 0-248q120-96 270-96t270 96l0 248 64 0 0-282q-31-27-64-50-82-53-178-71l0 32-184 0 0-32q-95 18-178 71-33 23-64 50z m109 90l0 549q30 25 69 45l0-113 54 0 0 134q38 12 75 14l0-148 54 0 0 148q37-4 77-14l0-134 54 0 0 111q37-18 67-43l0-549q-98-80-225-80t-225 80z m26-303l107 0 0 92q45-8 92-8t92 8l0-92 107 0 0-68-398 0 0 68z" horiz-adv-x="668" />
+
+<glyph glyph-name="edit" unicode="&#xe806;" d="M0-150l0 818 188 182 521 0 0-226 31 31 162-160-380-381-239-78 76 238 262 262 0 226-369 0 0-156-164 0 0-668 533 0 0 143 88 87 0-318-709 0z m361 264l119 39-80 82z" horiz-adv-x="902" />
+</font>
+</defs>
+</svg>

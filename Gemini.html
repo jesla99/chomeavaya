@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SIP.js Softphone</title>
+    <script src="js/sip-0.16.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #controls button { margin-right: 10px; padding: 10px 15px; }
+        #status { margin-top: 20px; font-weight: bold; }
+        #remoteAudio { display: none; } /* Hidden until a call is active */
+    </style>
+</head>
+<body>
+    <h1>SIP.js WebRTC Softphone</h1>
+
+    <div>
+        <label for="targetNumber">Call To:</label>
+        <input type="text" id="targetNumber" value="sip:DESTINATION_NUMBER@172.16.0.151">
+    </div>
+
+    <div id="controls" style="margin-top: 10px;">
+        <button id="callButton">Call</button>
+        <button id="hangupButton" disabled>Hang Up</button>
+    </div>
+
+    <div id="status">Status: Initializing...</div>
+
+    <audio id="remoteAudio" autoplay controls></audio>
+    <audio id="localAudio" muted controls></audio> <script>
+        const server = "wss://172.16.0.151:9443";
+        const user = "2042";
+        const password = "20242042";
+        const uri = `sip:${user}@172.16.0.151`;
+
+        let userAgent;
+        let currentSession; // To keep track of the active call session
+        let localStream; // To hold the local media stream
+
+        const statusElement = document.getElementById("status");
+        const callButton = document.getElementById("callButton");
+        const hangupButton = document.getElementById("hangupButton");
+        const targetNumberInput = document.getElementById("targetNumber");
+        const remoteAudioElement = document.getElementById("remoteAudio");
+        const localAudioElement = document.getElementById("localAudio");
+
+        function updateStatus(message) {
+            statusElement.textContent = `Status: ${message}`;
+        }
+
+        function enableCallControls() {
+            callButton.disabled = false;
+            targetNumberInput.disabled = false;
+        }
+
+        function disableCallControls() {
+            callButton.disabled = true;
+            targetNumberInput.disabled = true;
+        }
+
+        function enableHangup() {
+            hangupButton.disabled = false;
+        }
+
+        function disableHangup() {
+            hangupButton.disabled = true;
+        }
+
+        async function startSoftphone() {
+            updateStatus("Starting softphone...");
+
+            try {
+                // Get local media (microphone)
+                localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                localAudioElement.srcObject = localStream; // Optional: for monitoring your own audio
+
+                userAgent = new SIP.UserAgent({
+                    uri: SIP.UserAgent.makeURI(uri),
+                    authorizationUsername: user,
+                    authorizationPassword: password,
+                    transportOptions: {
+                        server: server
+                    },
+                    hackAllowUnregisteredOptionTags: true, // May be needed for some servers
+                    logLevel: 'debug' // For debugging, change to 'warn' or 'error' in production
+                });
+
+                // User Agent Event Handlers
+                userAgent.on("connecting", () => updateStatus("Connecting to SIP server..."));
+                userAgent.on("connected", () => {
+                    updateStatus("Connected to SIP server.");
+                    userAgent.register(); // Register after connecting
+                });
+                userAgent.on("disconnected", () => {
+                    updateStatus("Disconnected from SIP server. Attempting to reconnect...");
+                    // Implement reconnection logic if needed
+                });
+                userAgent.on("registered", () => {
+                    updateStatus("Registered successfully. Ready to make/receive calls.");
+                    enableCallControls();
+                });
+                userAgent.on("unregistered", () => {
+                    updateStatus("Unregistered.");
+                    disableCallControls();
+                    disableHangup();
+                });
+                userAgent.on("registrationFailed", (error) => {
+                    updateStatus(`Registration failed: ${error.message}`);
+                    console.error("Registration failed", error);
+                    disableCallControls();
+                    disableHangup();
+                });
+
+                // Handle incoming INVITE (calls)
+                userAgent.on("invite", (invitation) => {
+                    updateStatus("Incoming call...");
+                    currentSession = invitation;
+                    enableHangup();
+                    disableCallControls();
+
+                    invitation.delegate = {
+                        onSessionDescriptionHandler: (sdh) => {
+                            sdh.set ({'localMediaStream': localStream});
+                        },
+                        onSessionStateChange: (newState) => {
+                            if (newState === SIP.SessionState.Established) {
+                                updateStatus("Call established.");
+                                remoteAudioElement.srcObject = currentSession.sessionDescriptionHandler.remoteMediaStream;
+                                remoteAudioElement.play().catch(e => console.error("Error playing remote audio:", e));
+                            } else if (newState === SIP.SessionState.Terminated) {
+                                updateStatus("Call ended.");
+                                remoteAudioElement.srcObject = null;
+                                enableCallControls();
+                                disableHangup();
+                                currentSession = null;
+                            }
+                        }
+                    };
+
+                    // Auto-accept incoming calls for simplicity
+                    invitation.accept({
+                        sessionDescriptionHandlerOptions: {
+                            constraints: { audio: true, video: false }
+                        }
+                    })
+                    .then(() => updateStatus("Call accepted."))
+                    .catch((error) => {
+                        updateStatus(`Failed to accept call: ${error.message}`);
+                        console.error("Failed to accept call", error);
+                        enableCallControls();
+                        disableHangup();
+                    });
+                });
+
+                userAgent.start();
+
+            } catch (error) {
+                updateStatus(`Error initializing: ${error.message}`);
+                console.error("Softphone initialization error:", error);
+            }
+        }
+
+        // Call Button Handler
+        callButton.addEventListener("click", async () => {
+            const target = targetNumberInput.value.trim();
+            if (!target) {
+                alert("Please enter a target number or SIP URI.");
+                return;
+            }
+
+            if (!userAgent || !userAgent.isConnected() || !userAgent.isRegistered()) {
+                updateStatus("Softphone is not connected or registered.");
+                return;
+            }
+
+            updateStatus(`Calling ${target}...`);
+            disableCallControls();
+            enableHangup();
+
+            const inviter = new SIP.Inviter(userAgent, SIP.UserAgent.makeURI(target), {
+                sessionDescriptionHandlerOptions: {
+                    constraints: { audio: true, video: false }
+                }
+            });
+            currentSession = inviter;
+
+            inviter.delegate = {
+                 onSessionDescriptionHandler: (sdh) => {
+                    sdh.setLocalMediaStream(localStream);
+                },
+                onSessionStateChange: (newState) => {
+                    if (newState === SIP.SessionState.Established) {
+                        updateStatus("Call established.");
+                        remoteAudioElement.srcObject = currentSession.sessionDescriptionHandler.remoteMediaStream;
+                        remoteAudioElement.play().catch(e => console.error("Error playing remote audio:", e));
+                    } else if (newState === SIP.SessionState.Terminated) {
+                        updateStatus("Call ended.");
+                        remoteAudioElement.srcObject = null;
+                        enableCallControls();
+                        disableHangup();
+                        currentSession = null;
+                    }
+                }
+            };
+
+            try {
+                await inviter.invite();
+                updateStatus(`Call initiated to ${target}.`);
+            } catch (error) {
+                updateStatus(`Call failed: ${error.message}`);
+                console.error("Outgoing call failed", error);
+                enableCallControls();
+                disableHangup();
+                currentSession = null;
+            }
+        });
+
+        // Hangup Button Handler
+        hangupButton.addEventListener("click", () => {
+            if (currentSession) {
+                updateStatus("Terminating call...");
+                currentSession.bye()
+                    .then(() => {
+                        updateStatus("Call terminated successfully.");
+                        remoteAudioElement.srcObject = null;
+                    })
+                    .catch((error) => {
+                        updateStatus(`Error terminating call: ${error.message}`);
+                        console.error("Error terminating call", error);
+                    })
+                    .finally(() => {
+                        enableCallControls();
+                        disableHangup();
+                        currentSession = null;
+                    });
+            }
+        });
+
+        // Start the softphone when the page loads
+        window.addEventListener("load", startSoftphone);
+    </script>
+</body>
+</html>

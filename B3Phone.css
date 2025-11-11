@@ -1,0 +1,149 @@
+@import url('css/b3phone.css');
+
+@keyframes intermitente {
+    0% { opacity: 1; }
+    50% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+* {
+    font-size:11px;
+    font-family:Arial, Helvetica, sans-serif;
+    padding:3px;
+    color:gray
+}
+
+body{
+    padding:0px;
+    margin:0px;
+}
+
+/*Login*/
+#login{padding:5px}
+#login > p{
+    text-align:center
+}
+
+/*Dialer*/
+.on{color:green}
+.off{color:red}
+.estado0{background-color: white}  /*libre*/
+.estado1{background-color: blue}   /*espera*/
+.estado2{background-color: green}  /*entrante*/
+.estado3{
+    background-color: orange;
+    animation: intermitente 1s infinite;
+}  /*entrante*/
+
+.icon-volume-off,
+.icon-pause,
+.icon-phone-circled,
+.icon-share,
+.icon-edit
+{font-size:18px;position:absolute;padding-top:2px}
+.icon-share{margin-left:90px}
+.icon-edit{margin-left:120px}
+#inpTrans{
+    position:absolute;
+    width:50px;
+    margin-left:35px;
+}
+
+.icon-volume-off,
+.icon-pause,
+.icon-share,
+.icon-edit{
+    visibility: hidden
+}
+
+
+.icon-pause{
+    right:50px;
+    cursor:pointer
+}
+.icon-pause.hold{
+    color:orange
+}
+
+.icon-volume-off{
+    right:80px;
+    cursor:pointer;
+}
+
+
+#frm{
+    display:none
+}
+
+#dialer{
+    margin:0px;
+    display:block;
+    background-color: white;
+    padding:2px;
+    height:50px
+}
+
+#dialer >span{
+    display:block
+}
+
+#valCert{
+    text-decoration: none;
+    margin:5px;
+    padding:5px;
+    font-weight: bold;
+    border-radius:5px
+}
+
+#valCert:hover{
+    background-color: gray;
+    color:white;
+}
+
+#channels{
+    position:absolute;
+    right:0px;
+    width:30px;
+}
+
+#channels>*{
+    display:inline-block;
+    font-size:8px;
+    margin:1px;
+    width:50%;
+    border:1px solid gray;
+    text-align: center;
+    border-radius:3px;
+    cursor:pointer;
+}
+
+.ChannelSelected{
+    background-color: red;
+    border:1px solid green
+}
+
+
+#frm>div>label{
+    display:inline-block;
+    width:20%;
+    vertical-align: top;
+    top:0px
+}
+
+#frm>div>div{
+    display: inline-block;
+    width:calc(80% - 20px);
+}
+
+#frm>div>div>*{
+    width:99%
+}
+#frm>div>div>textarea{
+    height:100px
+}
+
+input, textarea{
+    border-radius: 3px;
+    border:1px solid gray;
+    padding:7px
+}
