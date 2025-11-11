@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "B3Phone",
+  "version": "1.0",
+  "description": "Extensión para realizar llamadas.",
+  "permissions": [
+    "scripting",
+    "activeTab"
+  ],
+  "action": {
+    "default_popup": "B3Phone.html"
+  }
+}
