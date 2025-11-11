@@ -1,10 +1,9 @@
 let creating; // A global promise to avoid concurrency issues
-var port;
+let popupPort = null;
+const offscreenUrl = chrome.runtime.getURL('offscreen.html');
 
-async function setupOffscreenDocument(path) {
-    // Check all windows controlled by the extension to see if one
-    // of them is the offscreen document with the given path
-    const offscreenUrl = chrome.runtime.getURL(path);
+// Function to manage the offscreen document
+async function setupOffscreenDocument() {
     const existingContexts = await chrome.runtime.getContexts({
         contextTypes: ['OFFSCREEN_DOCUMENT'],
         documentUrls: [offscreenUrl]
@@ -14,29 +13,44 @@ async function setupOffscreenDocument(path) {
         return;
     }
 
-    // create offscreen document
     if (creating) {
         await creating;
     } else {
         creating = chrome.offscreen.createDocument({
-            url: path,
+            url: 'offscreen.html',
             reasons: ['USER_MEDIA'],
-            justification: 'reason for needing user media',
+            justification: 'WebRTC connection requires a DOM environment',
         });
         await creating;
         creating = null;
     }
 }
 
-chrome.runtime.onConnect.addListener(function(newPort) {
-    port = newPort;
+// Listener for connections from the popup
+chrome.runtime.onConnect.addListener((port) => {
+    if (port.name === 'popup') {
+        popupPort = port;
+        port.onDisconnect.addListener(() => {
+            popupPort = null;
+        });
+    }
 });
 
-chrome.runtime.onMessage.addListener(async function(message, sender, sendResponse) {
-    if (port) {
-        port.postMessage(message);
+// Listener for messages from any part of the extension
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+    // Check if the offscreen document needs to be created
+    if (message.type === 'login' || message.type === 'makeCall') {
+        await setupOffscreenDocument();
     }
 
-    await setupOffscreenDocument('offscreen.html');
-    chrome.runtime.sendMessage(message);
+    // Differentiate messages based on the sender's URL
+    if (sender.url === offscreenUrl) {
+        // Message is from the offscreen document, forward to the popup
+        if (popupPort) {
+            popupPort.postMessage(message);
+        }
+    } else {
+        // Message is from the popup, forward to the offscreen document
+        chrome.runtime.sendMessage(message);
+    }
 });
