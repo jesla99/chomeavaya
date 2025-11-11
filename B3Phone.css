@@ -19,7 +19,10 @@ body{
 }
 
 /*Login*/
-#login{padding:5px}
+#login{padding:5px;
+    margin: 0 auto;
+    width: 200px;
+}
 #login > p{
     text-align:center
 }
